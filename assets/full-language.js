@@ -1,5 +1,8 @@
-/* v13整页语言覆盖：中文保留中英对照，其他语言不显示中文或英文对照；补充精诚和卡片单字翻译。 */
+/* v14 唯一语言控制器：中文恢复原始中英对照；其余语言整页翻译；随时可切回中文且内容完整恢复。 */
 (function(){
+  var KEY='xinyi-health-language-v14';
+  ['xinyi-health-language-v3','xinyi-health-language-v5','xinyi-health-language-v9','xinyi-health-language-v10'].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});
+  var langs=[['zh-CN','中文','Chinese'],['en','English','English'],['es','Español','Spanish'],['ar','العربية','Arabic'],['hi','हिन्दी','Hindi'],['pt','Português','Portuguese'],['fr','Français','French'],['ru','Русский','Russian'],['ja','日本語','Japanese'],['de','Deutsch','German'],['ko','한국어','Korean'],['zh-TW','繁體中文','Traditional Chinese']];
   var T={
     en:{labels:['ABOUT US','SERVICE PHILOSOPHY','MEDICAL NETWORK','SERVICE JOURNEY','HEALTH SERVICES','TCM HERITAGE','WELLNESS DESTINATIONS','TRADITION & WELLNESS','ONE-TO-ONE CONSULTATION'],hero:'Full-Cycle Health Management Ecosystem',desc:'A cross-border, full-cycle health management ecosystem for global high-net-worth clients.',cta:'Book a Private Consultation',q:['Service Philosophy','Service Journey','Six Wellness Destinations'],h:['Your Trusted Full-Cycle Health Concierge','Precision · Integrity · Harmony','Assess First, Then Match the Right System','Every Step Has an Answer','Precision Medicine Meets Quality Living','Bringing TCM Culture Back to Life','Six Wellness Destinations · One City, One Scene, One Plan','From Treatment to Wellness · Return to a Better Life','Health Management Starts with a Conversation'],body:'Professional care, bilingual coordination, and continuous health support across every stage.',city:['Beijing · Core Hub','Shanghai · International Gateway','Guangzhou · Southern Hub'],step:['Pre-Consultation','During Care','Follow-Up'],svc:['Specialty Care','Premium Check-ups & Imaging','Postoperative Rehabilitation','TCM Constitution Care','Quality of Life','Long-Term Health Records'],tag:['Assessment','TCM Wellness','Forest Healing','Lakeside Retreat','Premium Stay','Companionship'],contact:'Tap the button to start a one-on-one health consultation.',soul:['Precision','Integrity','Harmony']},
     es:{labels:['SOBRE NOSOTROS','FILOSOFÍA DEL SERVICIO','RED MÉDICA','RECORRIDO DEL SERVICIO','SERVICIOS DE SALUD','HERENCIA DE LA MEDICINA CHINA','DESTINOS DE BIENESTAR','TRADICIÓN Y BIENESTAR','CONSULTA INDIVIDUAL'],hero:'Ecosistema de gestión integral de la salud',desc:'Un ecosistema transfronterizo de gestión de la salud para clientes de alto patrimonio.',cta:'Reservar consulta privada',q:['Filosofía del servicio','Recorrido del servicio','Seis destinos de bienestar'],h:['Su concierge de salud de confianza','Precisión · Integridad · Armonía','Evaluar primero y elegir el sistema adecuado','Cada etapa tiene una respuesta','Medicina de precisión y calidad de vida','La medicina china en la vida diaria','Seis destinos de bienestar · Una ciudad, una escena, un plan','Del tratamiento al bienestar · Hacia una vida mejor','La gestión de la salud empieza con una conversación'],body:'Atención profesional, coordinación bilingüe y apoyo continuo durante todo el recorrido de salud.',city:['Pekín · Centro principal','Shanghái · Puerta internacional','Cantón · Centro del sur'],step:['Antes de la consulta','Durante la atención','Seguimiento'],svc:['Atención especializada','Chequeos e imágenes premium','Rehabilitación posoperatoria','Cuidado constitucional chino','Calidad de vida','Historiales de salud'],tag:['Evaluación','Bienestar chino','Sanación forestal','Retiro junto al lago','Estancia premium','Acompañamiento'],contact:'Pulse el botón para iniciar una consulta de salud.',soul:['Precisión','Integridad','Armonía']},
@@ -13,7 +16,83 @@
     ko:{labels:['회사 소개','서비스 철학','의료 네트워크','서비스 여정','건강 서비스','중의학 전통','웰니스 거점','전통과 웰니스','1:1 상담'],hero:'전 주기 건강관리 서비스 생태계',desc:'전 세계 고액자산가를 위한 국경 간 건강관리 서비스 생태계입니다.',cta:'1:1 상담 예약',q:['서비스 철학','서비스 여정','6대 웰니스 거점'],h:['신뢰할 수 있는 건강 컨시어지','정밀 · 진정성 · 조화','먼저 평가하고 맞춤 시스템을 연결합니다','모든 단계에 답이 있습니다','정밀 의료와 더 나은 삶','중의학 문화를 일상으로','6대 웰니스 거점 · 한 도시, 한 장면, 한 계획','치료에서 웰니스까지 · 더 나은 삶으로','건강 관리를 한 번의 대화로 시작'],body:'전 단계에서 전문 케어, 이중언어 조율, 지속적인 건강 지원을 제공합니다.',city:['베이징 · 핵심 거점','상하이 · 국제 관문','광저우 · 남부 거점'],step:['상담 전','진료 중','사후관리'],svc:['전문 진료','프리미엄 검진·영상','수술 후 재활','중의학 체질 관리','삶의 질','장기 건강 기록'],tag:['평가','중의 웰니스','숲 치유','호숫가 휴식','프리미엄 체류','동행'],contact:'버튼을 눌러 1:1 건강 상담을 시작하세요.',soul:['정밀함','정직함','조화']},
     'zh-TW':{labels:['關於我們','服務內核','醫療網絡','服務流程','健康服務','中醫文化傳承','康養基地','傳統與康養','一對一諮詢'],hero:'全週期健康管理服務生態',desc:'為全球高淨值人群提供跨境全週期健康管理服務。',cta:'預約一對一諮詢',q:['服務內核','服務流程','六大康養基地'],h:['值得託付的全週期健康管家','精 · 誠 · 和','先判斷病種，再匹配體系','從診前到診後，每一步都有答案','精準醫療與品質生活並行','把中醫文化帶回生活','六大康養基地 · 一城一境，一地一方案','從治病到養生 · 回到更好的生活','讓健康管理從一次溝通開始'],body:'以專業照護、雙語協調與持續健康支持，陪伴每一個服務階段。',city:['北京 · 核心樞紐','上海 · 國際門戶','廣州 · 南方樞紐'],step:['診前','診中','診後'],svc:['專病精準醫療','高端體檢與影像','術後康復','中醫體質調養','生活品質','長期健康檔案'],tag:['醫學評估','中醫調養','森林康養','湖畔療癒','高端旅居','全程陪伴'],contact:'點擊按鈕開始一對一健康諮詢。',soul:['精','誠','和']}
   };
+  /* ---------- 语言选择器 ---------- */
+  var picker=document.createElement('div');
+  picker.className='language-picker';
+  picker.innerHTML='<button class="language-toggle" type="button" aria-expanded="false"><span></span><i>⌄</i></button><div class="language-menu" role="menu"></div>';
+  var hero=document.querySelector('.hero');
+  if(hero)hero.appendChild(picker);
+  var menu=picker.querySelector('.language-menu');
+  var toggleLabel=picker.querySelector('.language-toggle span');
+  langs.forEach(function(x){
+    var b=document.createElement('button');
+    b.className='language-option';b.type='button';b.dataset.lang=x[0];
+    b.innerHTML='<b>'+x[1]+'</b><small>'+x[2]+'</small>';
+    b.addEventListener('click',function(){applyFull(x[0]);picker.classList.remove('open');picker.querySelector('.language-toggle').setAttribute('aria-expanded','false')});
+    menu.appendChild(b);
+  });
+  picker.querySelector('.language-toggle').addEventListener('click',function(){var open=picker.classList.toggle('open');this.setAttribute('aria-expanded',open?'true':'false')});
+  document.addEventListener('click',function(e){if(!picker.contains(e.target))picker.classList.remove('open')});
+
+  /* ---------- 中文中英对照快照（用于从任意语言切回时完整恢复） ---------- */
+  var SNAP_SELECTORS=['.hero h1','.hero p','.hero .btn','.contact h2','.contact .lead','.contact .btn','.float','.foot','.quick strong','.quick small','.sec h2','.lead','.quote','.card b','.card h3','.card p','.net h3','.net p','.step b','.step h3','.step p','.base small','.base h3','.base p','.tags span','.wx-copy','.ey','.item h3','.item p'];
+  var snapshots=[];
+  SNAP_SELECTORS.forEach(function(sel){document.querySelectorAll(sel).forEach(function(el){snapshots.push([el,el.innerHTML])})});
+
   function put(el,v){if(el)el.textContent=v}
-  function applyFull(code){if(code==='zh-CN'){document.querySelectorAll('.en').forEach(function(e){e.style.display='block'});return}var d=T[code]||T.en;document.querySelectorAll('.en').forEach(function(e){e.style.display='none'});document.documentElement.lang=code;put(document.querySelector('.hero h1'),d.hero);put(document.querySelector('.hero p'),d.desc);put(document.querySelector('.hero .btn'),d.cta);document.querySelectorAll('.ey').forEach(function(e,i){put(e,d.labels[i%d.labels.length])});document.querySelectorAll('.quick strong').forEach(function(e,i){put(e,d.q[i])});document.querySelectorAll('.quick small').forEach(function(e){put(e,d.body)});document.querySelectorAll('.sec h2').forEach(function(e,i){put(e,d.h[i])});document.querySelectorAll('.lead').forEach(function(e){put(e,d.body)});put(document.querySelector('.quote'),d.body);document.querySelectorAll('.card b').forEach(function(e,i){put(e,d.soul[i])});document.querySelectorAll('.card h3').forEach(function(e,i){put(e,d.q[i%3])});document.querySelectorAll('.card p').forEach(function(e){put(e,d.body)});document.querySelectorAll('.net h3').forEach(function(e,i){put(e,d.city[i])});document.querySelectorAll('.net p').forEach(function(e){put(e,d.body)});document.querySelectorAll('.step b').forEach(function(e,i){put(e,'0'+(i+1)+' · '+d.step[i])});document.querySelectorAll('.step h3').forEach(function(e,i){put(e,d.q[i%3])});document.querySelectorAll('.step p').forEach(function(e){put(e,d.body)});var health=document.querySelectorAll('.sec.white')[2];if(health){health.querySelectorAll('.item h3').forEach(function(e,i){put(e,d.svc[i])});health.querySelectorAll('.item p').forEach(function(e){put(e,d.body)})}var culture=document.querySelector('.culture');if(culture){culture.querySelectorAll('.item h3').forEach(function(e,i){put(e,d.svc[i%3])});culture.querySelectorAll('.item p').forEach(function(e){put(e,d.body)})}document.querySelectorAll('.base small').forEach(function(e,i){put(e,'0'+(i+1)+' · '+d.city[i%3])});document.querySelectorAll('.base h3').forEach(function(e,i){put(e,d.q[i%3])});document.querySelectorAll('.base p').forEach(function(e){put(e,d.body)});document.querySelectorAll('.tags span').forEach(function(e,i){put(e,d.tag[i])});put(document.querySelector('.contact .lead'),d.contact);put(document.querySelector('.contact .btn'),d.cta);put(document.querySelector('.float'),d.cta);var foot=document.querySelector('.foot');if(foot)foot.textContent='信医健康 · '+d.hero;var wx=document.querySelector('.wx-copy');if(wx)wx.textContent=d.contact;localStorage.setItem('xinyi-health-language-v10',code)}
-  var picker=document.querySelector('.language-picker');if(picker){picker.querySelectorAll('.language-option').forEach(function(b){b.addEventListener('click',function(){applyFull(b.dataset.lang);setTimeout(function(){applyFull(b.dataset.lang)},0)})})}var code=localStorage.getItem('xinyi-health-language-v10')||'zh-CN';applyFull(code);setTimeout(function(){applyFull(code)},0);window.addEventListener('load',function(){applyFull(localStorage.getItem('xinyi-health-language-v10')||'zh-CN')});
+  function restoreZH(){
+    snapshots.forEach(function(pair){pair[0].innerHTML=pair[1]});
+    document.querySelectorAll('.en').forEach(function(e){e.style.display=''});
+  }
+  function setLangMeta(code){
+    document.documentElement.lang=code;
+    document.body.dataset.language=code;
+    var selected=langs.find(function(x){return x[0]===code})||langs[0];
+    document.querySelectorAll('.language-option').forEach(function(b){b.classList.toggle('active',b.dataset.lang===code)});
+    toggleLabel.innerHTML=selected[1]+'<small>'+selected[2]+'</small>';
+    localStorage.setItem(KEY,code);
+  }
+  function applyFull(code){
+    if(code==='zh-CN'){restoreZH();setLangMeta('zh-CN');return}
+    var d=T[code]||T.en;
+    document.querySelectorAll('.en').forEach(function(e){e.style.display='none'});
+    put(document.querySelector('.hero h1'),d.hero);
+    put(document.querySelector('.hero p'),d.desc);
+    put(document.querySelector('.hero .btn'),d.cta);
+    document.querySelectorAll('.ey').forEach(function(e,i){put(e,d.labels[i%d.labels.length])});
+    document.querySelectorAll('.quick strong').forEach(function(e,i){put(e,d.q[i])});
+    document.querySelectorAll('.quick small').forEach(function(e){put(e,d.body)});
+    document.querySelectorAll('.sec h2').forEach(function(e,i){put(e,d.h[i])});
+    document.querySelectorAll('.lead').forEach(function(e){put(e,d.body)});
+    put(document.querySelector('.quote'),d.body);
+    document.querySelectorAll('.card b').forEach(function(e,i){put(e,d.soul[i])});
+    document.querySelectorAll('.card h3').forEach(function(e,i){put(e,d.q[i%3])});
+    document.querySelectorAll('.card p').forEach(function(e){put(e,d.body)});
+    document.querySelectorAll('.net h3').forEach(function(e,i){put(e,d.city[i])});
+    document.querySelectorAll('.net p').forEach(function(e){put(e,d.body)});
+    document.querySelectorAll('.step b').forEach(function(e,i){put(e,'0'+(i+1)+' · '+d.step[i])});
+    document.querySelectorAll('.step h3').forEach(function(e,i){put(e,d.q[i%3])});
+    document.querySelectorAll('.step p').forEach(function(e){put(e,d.body)});
+    var health=document.querySelectorAll('.sec.white')[2];
+    if(health){health.querySelectorAll('.item h3').forEach(function(e,i){put(e,d.svc[i])});health.querySelectorAll('.item p').forEach(function(e){put(e,d.body)})}
+    var culture=document.querySelector('.culture');
+    if(culture){culture.querySelectorAll('.item h3').forEach(function(e,i){put(e,d.svc[i%3])});culture.querySelectorAll('.item p').forEach(function(e){put(e,d.body)})}
+    document.querySelectorAll('.base small').forEach(function(e,i){put(e,'0'+(i+1)+' · '+d.city[i%3])});
+    document.querySelectorAll('.base h3').forEach(function(e,i){put(e,d.q[i%3])});
+    document.querySelectorAll('.base p').forEach(function(e){put(e,d.body)});
+    document.querySelectorAll('.tags span').forEach(function(e,i){put(e,d.tag[i])});
+    put(document.querySelector('.contact .lead'),d.contact);
+    put(document.querySelector('.contact .btn'),d.cta);
+    put(document.querySelector('.float'),d.cta);
+    var foot=document.querySelector('.foot');
+    if(foot)foot.textContent='信医健康 · '+d.hero;
+    var wx=document.querySelector('.wx-copy');
+    if(wx)wx.textContent=d.contact;
+    setLangMeta(code);
+  }
+  var initial=localStorage.getItem(KEY)||'zh-CN';
+  if(initial!=='zh-CN'&&!T[initial])initial='zh-CN';
+  applyFull(initial);
+  setTimeout(function(){applyFull(initial)},0);
+  window.addEventListener('load',function(){applyFull(localStorage.getItem(KEY)||'zh-CN')});
 })();
